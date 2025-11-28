@@ -1221,8 +1221,10 @@ describe('legacy tests', () => {
 
       sentinel = frame.getSentinelClient({ scanInterval: 1000 });
       sentinel.setTracer(tracer);
-      sentinel.on("error", () => { });
+      sentinel.on("error", () => { console.log('error'); });
       await sentinel.connect();
+
+      console.log('connected');
 
       // Set up test data
       const entries: Array<string> = [];
@@ -1230,15 +1232,19 @@ describe('legacy tests', () => {
         entries.push(`startfailover:${i}`, `value${i}`);
       }
       await sentinel.mSet(entries);
+      console.log("mSet done");
 
       // Wait for addded keys to be replicated
       await setTimeout(2000);
+
+      console.log("timeout done");
 
       // Get original master and trigger immediate failover
       const originalMaster = sentinel.getMasterNode();
       
       // Stop master immediately before starting scan
       await frame.stopNode(originalMaster!.port.toString());
+      console.log("stopped node");
       
       let masterChangeDetected = false;
       let masterChangeResolve: () => void;
@@ -1255,7 +1261,9 @@ describe('legacy tests', () => {
         }
       });
 
+      console.log("waiting on master change promise");
       await masterChangePromise;
+      console.log("master change promise done");
 
       // Now start scan - should work with new master
       const foundKeys = new Set<string>();
@@ -1264,6 +1272,7 @@ describe('legacy tests', () => {
           foundKeys.add(key);
         }
       }
+      console.log("scan iterator on new master done");
 
       assert.equal(masterChangeDetected, true, 'Master change should have been detected');
       // Should find all keys even though master changed before scan started
@@ -1271,6 +1280,9 @@ describe('legacy tests', () => {
       
       // Verify master actually changed
       const newMaster = sentinel.getMasterNode();
+      console.log("new master port: ", newMaster?.port);
+      console.log("original master port: ", originalMaster?.port);
+      
       assert.notEqual(originalMaster?.port, newMaster?.port);
     });
   });
