@@ -1221,7 +1221,7 @@ describe('legacy tests', () => {
 
       sentinel = frame.getSentinelClient({ scanInterval: 1000 });
       sentinel.setTracer(tracer);
-      sentinel.on("error", () => { console.log('error'); });
+      sentinel.on("error", (error: Error) => { console.log('error', error ); });
       await sentinel.connect();
 
       console.log('connected');
@@ -1282,7 +1282,7 @@ describe('legacy tests', () => {
       const newMaster = sentinel.getMasterNode();
       console.log("new master port: ", newMaster?.port);
       console.log("original master port: ", originalMaster?.port);
-      
+
       assert.notEqual(originalMaster?.port, newMaster?.port);
     });
   });
