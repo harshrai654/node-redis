@@ -1109,12 +1109,9 @@ describe('legacy tests', () => {
         sentinel.destroy();
         sentinel = undefined;
       }
+       await frame.cleanup();
     });
 
-    after(async function () {
-      this.timeout(60000);
-      await frame.cleanup();
-    });
 
     it('should restart scan from beginning when master changes during iteration', async function () {
       this.timeout(60000);
