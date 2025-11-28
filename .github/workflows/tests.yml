@@ -6,6 +6,7 @@ on:
       - master
       - v4.0
       - v5
+      - test
     paths-ignore:
       - "**/*.md"
   pull_request:
