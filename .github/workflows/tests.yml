@@ -17,6 +17,7 @@ on:
       - test
     paths-ignore:
       - "**/*.md"
+  workflow_dispatch:
 jobs:
   tests:
     runs-on: ubuntu-latest
